@@ -1,4 +1,4 @@
-# 用vue2搭建的移动端页面脚手架的demo
+# 用vue2搭建的移动端页面脚手架demo
 一、使用了多入口的打包方式。同时在单入口内也可以使用路由进行页面切换。（多页面+路由）
 二、使用了postcss+flexible进行像素转换来实现移动端的适配。
 
@@ -19,7 +19,7 @@ npm i
 
 ### Compiles and hot-reloads for development
 ```
-npm run serve
+npm run s
 ```
 
 
