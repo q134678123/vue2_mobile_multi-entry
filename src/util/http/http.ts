@@ -21,9 +21,6 @@ export class HttpService {
      * @param host  支持访问不同的域名
      */
     public get(params: object, jwt: boolean, path: string, host: string) {
-        console.log(params);
-        console.log(baseUrl);
-        console.log(path);
         const url = path
         const body = params
         const baseURL = host?host:baseUrl
@@ -167,7 +164,7 @@ export class HttpService {
      * @param resolve
      */
     public static resultHandle(res: any, resolve: any) {
-        if (res.code === '200'||res.status===401) {
+        if (res.code == 200||res.status==401) {
             resolve(res);
         } else {
             HttpService.errorHandle(res);

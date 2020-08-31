@@ -1,4 +1,4 @@
-import token from './token'
+import query from './query'
 export default {
-    token
+    query
 };

@@ -11,12 +11,14 @@ import {
   Popup,
   Button,
   Field,
-  Icon
+  Icon,
+  Area
 } from 'vant'
 Vue.use(Popup)
     .use(Button)
     .use(Field)
     .use(Icon)
+    .use(Area)
 /*屏幕适配*/
 import 'amfe-flexible'
 /*公共基本样式*/

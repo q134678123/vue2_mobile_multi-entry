@@ -5,13 +5,13 @@
             <img src="../../../assets/images/indexAd.jpg">
         </div>
         <dl class="form-group">
-            <dd>
+            <dd @click="showArea=true">
                 <div class="form-label">地区
                 </div>
-                <input class="formItem-input" type="text" id="area" readonly="" placeholder="请选择房产所在地区">
+                <input class="formItem-input" type="text" id="area" readonly="" placeholder="请选择房产所在地区" v-model="inputAre">
                 <van-icon name="arrow" class="arr-right"/>
             </dd>
-            <dd>
+            <dd @click="ToPage('areaDetail')">
                 <div class="form-label">详细地址
                 </div>
                 <input class="formItem-input" type="text" readonly="" placeholder="请输入楼栋名称">
@@ -25,6 +25,10 @@
             </dd>
         </dl>
         <foot-button :propTitle="'我要评估'"></foot-button>
+        <van-popup v-model="showArea" position="bottom">
+            <van-area title="标题" :area-list="areaList"  @confirm="AreaClick"/>
+        </van-popup>
+
     </div>
 </template>
 
@@ -32,6 +36,7 @@
     import { Component, Vue, Prop } from 'vue-property-decorator'
     import headerTitle from '@/components/headerTitle.vue'
     import footButton from '@/components/footButton.vue'
+    import AreaList from '@/assets/json/Area'
     @Component({
         components: {
             headerTitle,
@@ -40,7 +45,69 @@
     })
 
     export default class Index extends Vue {
-
+        private areaList = AreaList
+        private bankAreaList = []
+        private showArea = false
+        private temp: any
+        private inputAre = ''
+        mounted(){
+            this.getArea()
+        }
+        changeObj (name: string,obj: any,level: any) {
+            for (let i in obj) {
+                if (name == obj[i].name) {
+                    if(!level){
+                        this.temp = obj[i]
+                        return
+                    }else {
+                        if(!obj[i].isOne){
+                            this.temp = obj[i]
+                            return
+                        }
+                    }
+                }
+                if (obj[i].child) {
+                    this.changeObj(name,obj[i].child,level)
+                }
+            }
+        }
+        AreaClick(e: any){
+            this.temp = null
+            e[1].name = e[1].name.replace('市','')
+            this.changeObj(e[1].name,this.bankAreaList,1)
+            let cityId,cityName,areaId,areaName
+            if(this.temp){
+                cityId = this.temp.id
+                cityName = this.temp.name
+            }else {
+                return
+            }
+            this.temp = null
+            this.changeObj(e[2].name.replace('市',''),this.bankAreaList,2)
+            if(this.temp){
+                areaId = this.temp.id
+                areaName = this.temp.name
+            }
+            let param = {
+                cityId: cityId,
+                cityName: cityName,
+                areaId: areaId,
+                areaName: areaName
+            }
+            this.inputAre = cityName+' '+areaName
+            this.showArea = false
+            console.log(param);
+        }
+        ToPage(name: string,params: any|undefined){
+            this.$router.push({name:name, params:params})
+        }
+        async getArea(){
+            const res = await this.$api.query.regiontree({})
+             this.bankAreaList  = JSON.parse(res.body)
+            for( let i  of this.bankAreaList){
+                (i as any).isOne = true
+            }
+        }
     }
 </script>
 <style scoped lang="less">
@@ -94,5 +161,14 @@
             top: -4px;
             left: 18px;
         }
+    }
+    .area-choose{
+        position: absolute;
+        bottom: -264px;
+        transition: bottom .5s;
+        width: 100%;
+    }
+    .area-choose.on{
+        bottom: 0;
     }
 </style>

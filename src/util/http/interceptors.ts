@@ -33,7 +33,7 @@ export class Interceptors {
          * 每次请求前，如果存在token则在请求头中携带token
          */
         this.instance.interceptors.request.use(
-            (config:any) => {
+            (config: any) => {
                 // 登录流程控制中，根据本地是否存在token判断用户的登录情况
                 // 但是即使token存在，也有可能token是过期的，所以在每次的请求头中携带token
                 // 后台根据携带的token判断用户的登录情况，并返回给我们对应的状态码
@@ -45,7 +45,7 @@ export class Interceptors {
                 }
                 return config;
             },
-            (error:object) => {
+            (error: object) => {
                 console.log(error);
             },
         );
@@ -54,7 +54,7 @@ export class Interceptors {
         // 响应拦截器
         this.instance.interceptors.response.use(
             // 请求成功
-            async (res:any) => {
+            async (res: any) => {
                 if (res.headers['access-token']) {
                     localStorage.setItem('access-token',res.headers['access-token']);
                     localStorage.setItem('refresh-token',res.headers['refresh-token']);
@@ -78,12 +78,12 @@ export class Interceptors {
                 }
             },
             // 请求失败
-            async (error:any) => {
+            async (error: any) => {
                 const {response} = error;
                 if (response) {
                     if(response.status===401){
                         localStorage.removeItem('access-token');
-                        let res = await Interceptors.doRequest(response)
+                        const res = await Interceptors.doRequest(response)
                         return Promise.resolve(res);
                     }
                     // 请求已发出，但是不在2xx的范围
@@ -95,7 +95,7 @@ export class Interceptors {
                     // network状态在app.vue中控制着一个全局的断网提示组件的显示隐藏
                     // 关于断网组件中的刷新重新获取数据，会在断网组件中说明
                     if(Router.app.$route.path!=='/login'){
-                        Router.push({path:'/login'})
+                        // Router.push({path:'/login'})
                     }
                     Toast.fail('网络连接异常,请稍后再试!');
                 }
@@ -128,20 +128,20 @@ export class Interceptors {
     }
 
     private static async refreshToken(){
-        let refreshToken = localStorage.getItem('refresh-token')
+        const refreshToken = localStorage.getItem('refresh-token')
         await axios.post('/refreshToken', {}, {
             baseURL: baseUrl,
             headers: {
                 'Content-Type': 'application/json',
                 'refresh-token':refreshToken
             },
-        }).then((res:any) => {
+        }).then((res: any) => {
             if(res.data.code==='200'){
                 localStorage.setItem('access-token',res.headers['access-token']);
             }else {
                 Router.push('login')
             }
-        }).catch((err:any) => {
+        }).catch((err: any) => {
             if(!tisFlag){
                 Toast.fail('' +
                     '请先登录');
@@ -156,13 +156,13 @@ export class Interceptors {
     }
 
 
-    private static async doRequest (response:any) {
-        let token = await Interceptors.refreshToken()
-        let config = response.config
+    private static async doRequest (response: any) {
+        const token = await Interceptors.refreshToken()
+        const config = response.config
         config.headers['access-token'] = token
         config.baseURL = baseUrl
         config.url = config.url.replace(baseUrl,'')
-        let {data:res} = await axios.request(config)
+        const {data:res} = await axios.request(config)
         return res
     }
 }

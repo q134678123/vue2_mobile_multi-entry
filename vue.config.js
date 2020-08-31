@@ -1,3 +1,4 @@
+// / glob是webpack安装时依赖的一个第三方模块，还模块允许你使用 *等符号, 例如lib/*.js就是获取lib文件夹下的所有js后缀名的文件
 const glob = require("glob");
 const merge = require("webpack-merge");
 const page = function() {
@@ -39,10 +40,12 @@ module.exports = {
 		inline: true,
 		proxy: {
 			'/test': {
+				// target: 'http://192.168.2.141:8280',
+				// target: 'https://sj.yungujia.com/api',
 				target:'http://127.0.0.1',
 				changeOrigin: true,
 				pathRewrite: {
-					'^/test': ''
+					'^/test': '/'
 				}
 			}
 		}

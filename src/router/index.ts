@@ -11,6 +11,12 @@ Vue.use(VueRouter)
       component: (resolve: any) =>
           require(['@/views/index/view/index.vue'], resolve)
     },
+    {
+      path: '/areaDetail',
+      name: 'areaDetail',
+      component: (resolve: any) =>
+          require(['@/views/index/view/AreaDetail.vue'], resolve)
+    },
 ]
 
 const router = new VueRouter({
